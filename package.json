@@ -1,0 +1,54 @@
+{
+  "name": "seery",
+  "version": "0.0.0",
+  "description": "telegram service robot",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_ENV=production node index.js",
+    "dev": "nodemon index.js",
+    "lint": "eslint src test *.js --fix",
+    "precommit": "lint-staged",
+    "test": "jest"
+  },
+  "author": "ctxhou",
+  "license": "MIT",
+  "dependencies": {
+    "config": "^1.30.0",
+    "date-fns": "^1.29.0",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "grant-express": "^3.8.1",
+    "lodash": "^4.17.5",
+    "mongoose": "^5.0.9",
+    "nba-stats-client": "^0.0.4",
+    "node-cron": "^1.2.1",
+    "node-getpocket": "^1.0.0",
+    "node-hn-api": "^1.1.0",
+    "node-mlb-api": "^0.0.2-4",
+    "outdent": "^0.4.1",
+    "qs": "^6.5.1",
+    "telegraf": "^3.19.0",
+    "tinyurl": "^1.1.2",
+    "turl": "^1.1.1",
+    "wakatime": "^1.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.18.2",
+    "eslint-config-google": "^0.9.1",
+    "husky": "^0.15.0-rc.8",
+    "jest": "^22.4.2",
+    "lint-staged": "^7.0.0",
+    "morgan": "^1.9.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run precommit"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
+  }
+}

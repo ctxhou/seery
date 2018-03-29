@@ -1,0 +1,13 @@
+{
+  "ignore": [
+    ".editorconfig",
+    ".gitignore",
+    ".eslintrc.js",
+    "package.json",
+    "README.md",
+    "test"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  }
+}
