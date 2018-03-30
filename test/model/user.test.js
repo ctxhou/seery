@@ -3,7 +3,7 @@ const User = require('../../src/schemas/user'); // eslint-disable-line
 const {
   getUser,
   newUser,
-  saveWakatimeToken
+  saveToken
 } = require('../../src/model/user');
 
 describe('test mongoose User model', () => {
@@ -28,14 +28,14 @@ describe('test mongoose User model', () => {
   it('newUser', () => {
     const telegramId = 'sdfsdfs';
     return newUser(telegramId).then((res) => {
-      expect(JSON.parse(JSON.stringify(res)).telegramId).toEqual(telegramId);
+      expect(res.telegramId).toEqual(telegramId);
     });
   });
 
-  it('saveWakatimeToken', () => {
+  it('saveToken', () => {
     const token = 'dsfsdfsdf';
     mockingoose.User.toReturn(_doc, 'findOne'); // findById is findOne
-    return saveWakatimeToken(_doc.id, token).then((user) => {
+    return saveToken(_doc.id, 'wakatimeToken', token).then((user) => {
       expect(user.wakatimeToken).toEqual(token);
     });
   });

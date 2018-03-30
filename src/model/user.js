@@ -21,9 +21,9 @@ const newUser = async (telegramId) => {
   return false;
 };
 
-const saveWakatimeToken = async (telegramId, token) => {
+const saveToken = async (telegramId, key, token) => {
   const user = await getUser(telegramId);
-  user.wakatimeToken = token;
+  user[key] = token;
   return user.save();
 };
 
@@ -31,5 +31,5 @@ module.exports = {
   User,
   getUser,
   newUser,
-  saveWakatimeToken
+  saveToken
 };

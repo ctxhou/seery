@@ -1,8 +1,9 @@
 const Telegraf = require('telegraf');
 const express = require('express');
-const session = require('telegraf/session');
+const telegrafSession = require('telegraf/session');
 const Grant = require('grant-express');
-const config = require('./env/bot.config');
+const session = require('express-session');
+const config = require('./env/config');
 require('./src/model/db');
 
 const services = require('./src/services');
@@ -22,7 +23,7 @@ const grant = new Grant(
 );
 
 const bot = new Telegraf(config.telegramToken);
-bot.use(session());
+bot.use(telegrafSession());
 middlewares(bot);
 services(bot);
 bot.telegram.setWebhook(config.publicUrl);
@@ -30,6 +31,7 @@ bot.telegram.setWebhook(config.publicUrl);
 const app = express();
 // app.get('/', (req, res) => res.send('Hello World!'));
 app.use(bot.webhookCallback('/'));
+app.use(session({secret: 'very secret'}));
 app.use(grant);
 app.use(...serviceRouters);
 

@@ -4,7 +4,7 @@ const getTime = require('date-fns/get_time');
 const outdent = require('outdent');
 const {createURL, maxChar} = require('../utils');
 const {getUser} = require('../model/user');
-const config = require('../../env/bot.config');
+const config = require('../../env/config');
 
 const getToken = async (telegramId) => {
   const user = await getUser(telegramId);

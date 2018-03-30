@@ -3,7 +3,7 @@ const format = require('date-fns/format');
 const startOfWeek = require('date-fns/start_of_week');
 const lastDayOfWeek = require('date-fns/last_day_of_week');
 const subWeeks = require('date-fns/sub_weeks');
-const {getUser, saveWakatimeToken} = require('../model/user');
+const {getUser, saveToken} = require('../model/user');
 const {secondsToHourMin} = require('../utils/time');
 const {
   sendGetTokenMessage,
@@ -86,7 +86,7 @@ const wakatimeAuth = async ({message, replyWithHTML}) => {
   if (!token) {
     replyWithHTML(`You need to input the token after /wakatime_auth`);
   } else {
-    const user = await saveWakatimeToken(telegramId, token);
+    const user = await saveToken(telegramId, 'wakatimeToken', token);
     if (user) {
       replyWithHTML(`Great job! Now you can start to use wakatime service: /wakatime`);
     } else {

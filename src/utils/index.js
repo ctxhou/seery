@@ -1,4 +1,4 @@
-const config = require('../../env/getConfig');
+const config = require('../../env/config');
 
 const maxChar = 4096;
 
