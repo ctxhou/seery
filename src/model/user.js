@@ -1,11 +1,4 @@
-const mongoose = require('mongoose');
-const userSchema = new mongoose.Schema({
-  telegramId: String,
-  pocketToken: {type: String, default: ''},
-  wakatimeToken: {type: String, default: ''}
-});
-
-const User = mongoose.model('User', userSchema);
+const User = require('../schemas/user');
 
 const getUser = async (telegramId) => {
   const query = User.findOne({telegramId});
@@ -14,15 +7,18 @@ const getUser = async (telegramId) => {
 };
 
 const newUser = async (telegramId) => {
-  User.findOne({telegramId}, (err, user) => {
-    if (!user) {
+  const query = User.findOne({telegramId});
+  const user = await query.exec();
+  if (!user) {
+    try {
       const user = new User({telegramId});
-      user.save((err) => {
-        if (err) throw err;
-        console.log('User saved successfully!');
-      });
+      const result = await user.save();
+      return result;
+    } catch (err) {
+      throw new Error(err);
     }
-  });
+  }
+  return false;
 };
 
 const saveWakatimeToken = async (telegramId, token) => {
@@ -32,6 +28,7 @@ const saveWakatimeToken = async (telegramId, token) => {
 };
 
 module.exports = {
+  User,
   getUser,
   newUser,
   saveWakatimeToken

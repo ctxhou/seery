@@ -1,6 +1,13 @@
-# Seery
-
-> A telegram service integration robot
+<div align="center">
+	<img src="https://i.imgur.com/9iEkSeJ.png" width="500"/>
+	<h1>Seery</h1>
+	<p>
+		<b>A telegram service integration robot</b>
+	</p>
+	<br>
+	<br>
+	<br>
+</div>
 
 ## Command list
 
@@ -93,5 +100,54 @@
 
 ## Development
 
-#### Install dependencies
+### Install dependencies
 
+```bash
+yarn install
+```
+
+### Update config
+
+Look up `env/` folder, and change all `**.sample.js` to your setting.
+
+For example:
+
+**bot.config.development.sample.js** → **bot.config.development.js**
+
+Then, use your development telegram, pocket token.
+
+### Running local server
+
+**Open ngrok**
+
+I suggest to use `ngrok` to create a tunnel to localhost, and use this url to link to telegram.
+
+You can look up the [document](https://ngrok.com/) to install `ngrok`.
+
+After installing, open ngrok:
+
+```bash
+ngrok http 5000
+```
+
+**Open dev server**
+
+Open mongodb, and run development server
+
+```
+npm run dev
+```
+
+### Test your bot
+
+After finishing above steps, try type something in your dev bot.
+
+You should get the proper response.
+
+<hr/>
+
+Any PR and idea are welcome.
+
+## License
+
+MIT [@ctxhou](https://github.com/ctxhou)

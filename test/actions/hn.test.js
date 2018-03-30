@@ -1,5 +1,9 @@
 const hnApi = require('node-hn-api');
-const {normalize} = require('../../src/actions/hn');
+const {hn, normalize} = require('../../src/actions/hn');
+
+test('hn need to be defined', () => {
+  expect(hn).toBeDefined();
+});
 
 test('normalize', () => {
   expect.assertions(2);
