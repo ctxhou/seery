@@ -95,42 +95,36 @@ const wakatimeAuth = async ({message, replyWithHTML}) => {
     }
   }
 };
-
-const callbackQuery = async ({callbackQuery, replyWithHTML, answerCbQuery}) => {
+const wakatimeToday = async ({callbackQuery, replyWithHTML, answerCbQuery}) => {
   const telegramId = callbackQuery.from.id;
-  const data = callbackQuery.data;
-  switch (data) {
-    case 'wakatime-today': {
-      try {
-        const token = await getToken(telegramId);
-        const result = await getWakaTimeInstance(token).summaries(new Date());
-        const text = genText(result);
-        replyWithHTML(text);
-        answerCbQuery('ok');
-      } catch (e) {
-        console.log('error:', e);
-      }
-      break;
-    }
-
-    case 'wakatime-lastweek': {
-      const token = await getToken(telegramId);
-      const lastWeek = subWeeks(new Date(), 1);
-      const startDay = startOfWeek(lastWeek);
-      const lastDay = lastDayOfWeek(lastWeek);
-      const result = await getWakaTimeInstance(token).summaries({start: startDay, end: lastDay});
-      const text = genText(result);
-      replyWithHTML(text, {parse_mode: 'HTML'});
-      answerCbQuery('ok');
-      break;
-    }
+  try {
+    const token = await getToken(telegramId);
+    const result = await getWakaTimeInstance(token).summaries(new Date());
+    const text = genText(result);
+    replyWithHTML(text);
+    answerCbQuery('ok');
+  } catch (e) {
+    console.log('error:', e);
   }
+};
+
+const wakatimeLastweek = async ({callbackQuery, replyWithHTML, answerCbQuery}) => {
+  const telegramId = callbackQuery.from.id;
+  const token = await getToken(telegramId);
+  const lastWeek = subWeeks(new Date(), 1);
+  const startDay = startOfWeek(lastWeek);
+  const lastDay = lastDayOfWeek(lastWeek);
+  const result = await getWakaTimeInstance(token).summaries({start: startDay, end: lastDay});
+  const text = genText(result);
+  replyWithHTML(text, {parse_mode: 'HTML'});
+  answerCbQuery('ok');
 };
 
 module.exports = {
   wakatime,
   wakatimeAuth,
-  callbackQuery
+  wakatimeToday,
+  wakatimeLastweek
 };
 module.exports.regularTime = regularTime;
 module.exports.genText = genText;

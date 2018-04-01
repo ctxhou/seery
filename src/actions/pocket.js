@@ -1,17 +1,18 @@
 const GetPocket = require('node-getpocket');
 const subWeeks = require('date-fns/sub_weeks');
 const getTime = require('date-fns/get_time');
+const Markup = require('telegraf/markup');
 const outdent = require('outdent');
 const {createURL, maxChar} = require('../utils');
 const {getUser} = require('../model/user');
 const config = require('../../env/config');
 
-const getToken = async (telegramId) => {
+const getPocketInstance = async (telegramId) => {
   const user = await getUser(telegramId);
-  return user.pocketToken;
-};
-
-const getPocketInstance = (token) => {
+  const token = user.pocketToken;
+  if (token.length === 0) {
+    return false;
+  }
   const param = {
     consumer_key: config.pocketConsumerToken,
     redirect_uri: createURL('/getpocket_callback')
@@ -19,8 +20,8 @@ const getPocketInstance = (token) => {
   return new GetPocket({...param, access_token: token});
 };
 
-const getLastWeek = (token) => {
-  const pocket = getPocketInstance(token);
+const getLastWeek = async (telegramId) => {
+  const pocket = await getPocketInstance(telegramId);
   return new Promise((res, rej) => {
     pocket.get({since: getTime(subWeeks(new Date(), 1)) / 1000, state: 'unread'}, (err, resp) => {
       if (err) {
@@ -32,8 +33,9 @@ const getLastWeek = (token) => {
   });
 };
 
-const archiveArticle = (token, itemId) => {
-  const pocket = getPocketInstance(token);
+const archiveArticle = async (telegramId, itemId) => {
+  const pocket = await getPocketInstance(telegramId);
+  console.log(itemId);
   return new Promise((res, rej) => {
     pocket.archive({item_id: itemId}, (err, resp) => {
       if (err) {
@@ -63,105 +65,127 @@ const template = (lists) => {
   `;
 };
 
-const pocket = async ({message, replyWithHTML}) => {
+const reAuthAction = async ({replyWithHTML, telegramId}) => {
+  const authURL = createURL(`/services/getpocket?telegramId=${telegramId}`);
+  replyWithHTML(outdent`
+      Seery bot had some problems to get articles from your pocket account.
+
+      Please open this link to re-authorize the bot:
+      <a href="${authURL}">${authURL}</a>
+    `,
+    Markup.inlineKeyboard(
+      [
+        [Markup.callbackButton('Open Url to auth your pocket', authURL)]
+      ]
+    ).extra()
+  );
+};
+
+const commandAction = async ({message, replyWithHTML}) => {
   const telegramId = message.from.id;
-  const token = await getToken(telegramId);
-  const hasToken = token.length > 0;
+  const hasToken = await getPocketInstance(telegramId);
   if (hasToken) {
-    replyWithHTML('Select pocket services', {
-      reply_markup: {
-        inline_keyboard: [
-          [{
-            text: 'Show an article since last week',
-            callback_data: 'pocket-shuffle-last-week'
-          }],
-          [{
-            text: 'Show all articles since last week',
-            callback_data: 'pocket-lastweek'
-          }]
+    replyWithHTML('Select pocket services',
+      Markup.inlineKeyboard(
+        [
+          [Markup.callbackButton('Show an article since last week', 'pocket-shuffle-last-week')],
+          [Markup.callbackButton('Show all articles since last week', 'pocket-lastweek')]
         ]
-      }
-    });
+      ).extra()
+    );
   } else {
     const authURL = createURL(`/services/getpocket?telegramId=${telegramId}`);
     replyWithHTML(outdent`
-      Hi, I found you didn't auth your Pocket to Seery bot.
+      Hi, You didn't auth your Pocket to Seery bot.
 
       Open this link to authorize the bot:
 
       <a href="${authURL}">${authURL}</a>
-    `);
+    `,
+      Markup.inlineKeyboard(
+        [
+          [Markup.callbackButton('Open Url to auth your pocket', authURL)]
+        ]
+      ).extra()
+    );
   }
 };
 
-const callbackQuery = async ({callbackQuery, replyWithHTML, answerCbQuery}) => {
+const shuffleLastWeek = async ({callbackQuery, replyWithHTML, answerCbQuery}) => {
   const telegramId = callbackQuery.from.id;
-  const data = callbackQuery.data;
-  switch (true) {
-    case data === 'pocket-shuffle-last-week': {
-      const token = await getToken(telegramId);
-      const resp = await getLastWeek(token);
-      const listKey = Object.keys(resp.list);
-      const randomKey = listKey[Math.floor(Math.random() * listKey.length)];
-      replyWithHTML(template({[randomKey]: resp.list[randomKey]}), {
-        reply_markup: {
-          inline_keyboard: [
-            [{
-              text: 'Archive',
-              callback_data: `pocket-archive-[${randomKey}]`
-            }]
-          ]
-        }
-      });
-      answerCbQuery('Success');
-      break;
-    }
-    case data === 'pocket-lastweek': {
-      const token = await getToken(telegramId);
-      const sendMsg = (messages) => {
-        messages = messages.join('\n\n');
-        replyWithHTML(messages, {
-          disable_web_page_preview: true
-        });
-      };
-      const resp = await getLastWeek(token);
-      const allList = resp.list;
-      let messages = [];
-      let charCount = 0;
-      for (let id in allList) {
-        if (allList[id]) {
-          const list = allList[id];
-          const article = articleTemplate(list, false);
-          if (charCount + article.length > maxChar) {
-            sendMsg(messages);
-            charCount = 0;
-            messages = [];
-          } else {
-            charCount += article.length;
-            messages.push(article);
-          }
-        }
-      }
-      if (messages.length > 0) {
-        sendMsg(messages);
-      }
-      answerCbQuery('Success');
-      break;
-    }
-    case data.substring(0, 14) === 'pocket-archive': {
-      const articleId = data.match(/\[(.*?)\]/)[1];
-      const token = await getToken(telegramId);
-      const resp = await archiveArticle(token, articleId);
-      if (resp.status === 1) {
-        answerCbQuery('Success archive');
-      }
-      break;
-    }
+  try {
+    const resp = await getLastWeek(telegramId);
+    const listKey = Object.keys(resp.list);
+    const randomKey = listKey[Math.floor(Math.random() * listKey.length)];
+    replyWithHTML(template({[randomKey]: resp.list[randomKey]}),
+      Markup.inlineKeyboard(
+        [
+          Markup.callbackButton('Archive', `pocket-archive-[${randomKey}]`)
+        ]
+      ).extra()
+    );
+    answerCbQuery('Success');
+  } catch (err) {
+    reAuthAction({replyWithHTML, telegramId});
   }
 };
 
+const allLastWeek = async ({callbackQuery, replyWithHTML, answerCbQuery}) => {
+  const telegramId = callbackQuery.from.id;
+  const sendMsg = (messages) => {
+    messages = messages.join('\n\n');
+    replyWithHTML(messages, {
+      disable_web_page_preview: true
+    });
+  };
+  try {
+    const resp = await getLastWeek(telegramId);
+    const allList = resp.list;
+    let messages = ['<b>Pocket All Articles since last week</b>'];
+    let charCount = 0;
+    for (let id in allList) {
+      if (allList[id]) {
+        const list = allList[id];
+        const article = articleTemplate(list, false);
+        if (charCount + article.length > maxChar) {
+          sendMsg(messages);
+          charCount = 0;
+          messages = [];
+        } else {
+          charCount += article.length;
+          messages.push(article);
+        }
+      }
+    }
+    if (messages.length > 0) {
+      sendMsg(messages);
+    }
+    answerCbQuery('Success');
+  } catch (err) {
+    reAuthAction({replyWithHTML, telegramId});
+  }
+};
+
+const archive = async ({callbackQuery, replyWithHTML, answerCbQuery}) => {
+  const articleId = callbackQuery.data.match(/\[(.*?)\]/)[1];
+  const telegramId = callbackQuery.from.id;
+  try {
+    const resp = await archiveArticle(telegramId, articleId);
+    if (resp.status === 1) {
+      answerCbQuery('Success archive');
+    }
+  } catch (err) {
+    reAuthAction({replyWithHTML, telegramId});
+  }
+};
 
 module.exports = {
-  pocket,
-  callbackQuery
+  commandAction,
+  shuffleLastWeek,
+  allLastWeek,
+  archive
 };
+
+// for test
+module.exports.getPocketInstance = getPocketInstance;
+module.exports.getLastWeek = getLastWeek;

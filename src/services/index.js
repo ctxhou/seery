@@ -15,11 +15,6 @@ const services = (bot) => {
   hnHanlder.message(bot);
   pocketHandler.message(bot);
   wakatimeHandler.message(bot);
-
-  bot.on('callback_query', async (ctx) => {
-    await pocketHandler.callback(ctx);
-    await wakatimeHandler.callback(ctx);
-  });
 };
 
 module.exports = services;

@@ -1,9 +1,13 @@
 const User = require('../schemas/user');
 
 const getUser = async (telegramId) => {
-  const query = User.findOne({telegramId});
-  const user = await query.exec();
-  return user;
+  try {
+    const query = User.findOne({telegramId});
+    const user = await query.exec();
+    return user;
+  } catch (err) {
+    throw new Error(err);
+  }
 };
 
 const newUser = async (telegramId) => {
