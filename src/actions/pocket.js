@@ -35,7 +35,6 @@ const getLastWeek = async (telegramId) => {
 
 const archiveArticle = async (telegramId, itemId) => {
   const pocket = await getPocketInstance(telegramId);
-  console.log(itemId);
   return new Promise((res, rej) => {
     pocket.archive({item_id: itemId}, (err, resp) => {
       if (err) {

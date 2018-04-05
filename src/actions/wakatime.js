@@ -121,7 +121,6 @@ const sendWakatimeSummaries = async ({callbackQuery, replyWithHTML, answerCbQuer
       sendGetTokenMessage(replyWithHTML);
     }
   } catch (e) {
-    console.log(e);
     sendWrongTokenMessage(replyWithHTML);
   }
 };

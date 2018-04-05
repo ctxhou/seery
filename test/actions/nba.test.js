@@ -1,9 +1,19 @@
-const nbaClinet = require('nba-stats-client');
-const {normalize} = require('../../src/actions/nba');
+jest.setMock('nba-stats-client', require('../../__mocks__/nba-stats-client'));
+const {
+  // nbaHelper,
+  // nba,
+  // nbaError,
+  normalize
+} = require('../../src/actions/nba');
+const nbaClient = require('nba-stats-client');
+
+describe('nba', () => {
+
+});
 
 test('normalize', () => {
   expect.assertions(1);
-  return nbaClinet.getGamesFromDate(new Date(2018, 2, 10))
+  return nbaClient.getGamesFromDate(new Date(2018, 2, 10))
     .then(normalize)
     .then((re) => {
       expect(re).toEqual([
