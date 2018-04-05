@@ -9,6 +9,7 @@ const defaultHandler = ({replyWithHTML}) => {
     /wakatime - get wakatime summary
     /shorturl - get short url
     /nba - get nba scores
+    /mlb - get mlb scores
   `);
 };
 
