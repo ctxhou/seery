@@ -85,6 +85,4 @@ const wakatimeData = {
   'start': '2018-01-14T06:00:00Z'
 };
 
-module.exports = {
-  wakatimeData
-};
+module.exports = wakatimeData;

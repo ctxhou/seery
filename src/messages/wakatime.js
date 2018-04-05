@@ -1,5 +1,7 @@
+const outdent = require('outdent');
+
 exports.sendGetTokenMessage = async (replyWithHTML) => {
-  replyWithHTML(`
+  replyWithHTML(outdent`
     Hi, I found you didn't input your Wakatime token to Seery bot.
 
     Please open your wakatime <a href="https://wakatime.com/settings/account">profile page</a>, and copy the secret api key.
@@ -26,4 +28,16 @@ exports.sendSelectRangeMessage = (replyWithHTML) => {
       ]
     }
   });
+};
+
+exports.sendWrongTokenMessage = (replyWithHTML) => {
+  replyWithHTML(outdent`
+    <b>Wakatime error</b>
+    It seems like the API token you provided is not correct, please input the token again.
+
+    Please open your wakatime <a href="https://wakatime.com/settings/account">profile page</a>, and copy the secret api key.
+
+    After you copy the token, call me via /wakatime_auth [token] command, this token is only used in Seery bot service.
+    Example: /wakatime_auth 12u93u8sfop
+  `);
 };

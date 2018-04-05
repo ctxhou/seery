@@ -20,7 +20,7 @@ describe('test mongoose User model', () => {
 
   it('getUser', () => {
     mockingoose.User.toReturn(_doc, 'findOne'); // findById is findOne
-    return getUser('5dd7f191e810c19729de860ea').then((res) => {
+    return getUser(_doc.telegramId).then((res) => {
       expect(JSON.parse(JSON.stringify(res))).toMatchObject(_doc);
     });
   });

@@ -3,20 +3,21 @@ const format = require('date-fns/format');
 const startOfWeek = require('date-fns/start_of_week');
 const lastDayOfWeek = require('date-fns/last_day_of_week');
 const subWeeks = require('date-fns/sub_weeks');
+const outdent = require('outdent');
 const {getUser, saveToken} = require('../model/user');
 const {secondsToHourMin} = require('../utils/time');
 const {
   sendGetTokenMessage,
-  sendSelectRangeMessage
+  sendSelectRangeMessage,
+  sendWrongTokenMessage
 } = require('../messages/wakatime');
 
-const getWakaTimeInstance = (token) => {
-  return new WakaTime(token);
-};
-
-const getToken = async (telegramId) => {
+const getWakaTimeInstance = async (telegramId) => {
   const user = await getUser(telegramId);
-  return user.wakatimeToken;
+  if (user.wakatimeToken.length === 0) {
+    return false;
+  }
+  return new WakaTime(user.wakatimeToken);
 };
 
 const formatTime = (time) => {
@@ -56,27 +57,27 @@ const regularTime = (res) => {
 
 const genText = (re) => {
   const data = regularTime(re);
-  return `
-Wakatime report from ${formatTime(data.start)} to ${formatTime(data.end)}:
+  return outdent`
+    Wakatime report from ${formatTime(data.start)} to ${formatTime(data.end)}:
 
-<b>Total Time: ${secondsToHourMin(data.totalSeconds)}</b>
+    <b>Total Time: ${secondsToHourMin(data.totalSeconds)}</b>
 
-<b>Project Time:</b>
-<code>
-${data.projects.map((project) =>
-      `．${project[0]}: ${secondsToHourMin(project[1])}`
-    ).join('\n')}
-</code>
-`;
+    <b>Project Time:</b>
+    <code>
+    ${data.projects.map((project) =>
+          `．${project[0]}: ${secondsToHourMin(project[1])}`
+        ).join('\n')}
+    </code>
+  `;
 };
 
-const wakatime = async ({message, replyWithHTML}) => {
+const commandAction = async ({message, replyWithHTML}) => {
   const telegramId = message.from.id;
-  const token = await getToken(telegramId);
-  if (token.length === 0) {
-    sendGetTokenMessage(replyWithHTML);
-  } else {
+  const token = await getWakaTimeInstance(telegramId);
+  if (token) {
     sendSelectRangeMessage(replyWithHTML);
+  } else {
+    sendGetTokenMessage(replyWithHTML);
   }
 };
 
@@ -95,36 +96,44 @@ const wakatimeAuth = async ({message, replyWithHTML}) => {
     }
   }
 };
-const wakatimeToday = async ({callbackQuery, replyWithHTML, answerCbQuery}) => {
-  const telegramId = callbackQuery.from.id;
-  try {
-    const token = await getToken(telegramId);
-    const result = await getWakaTimeInstance(token).summaries(new Date());
-    const text = genText(result);
-    replyWithHTML(text);
-    answerCbQuery('ok');
-  } catch (e) {
-    console.log('error:', e);
-  }
+
+const wakatimeToday = async (ctx) => {
+  await sendWakatimeSummaries(ctx, new Date());
 };
 
-const wakatimeLastweek = async ({callbackQuery, replyWithHTML, answerCbQuery}) => {
-  const telegramId = callbackQuery.from.id;
-  const token = await getToken(telegramId);
+const wakatimeLastweek = async (ctx) => {
   const lastWeek = subWeeks(new Date(), 1);
   const startDay = startOfWeek(lastWeek);
   const lastDay = lastDayOfWeek(lastWeek);
-  const result = await getWakaTimeInstance(token).summaries({start: startDay, end: lastDay});
-  const text = genText(result);
-  replyWithHTML(text, {parse_mode: 'HTML'});
-  answerCbQuery('ok');
+  await sendWakatimeSummaries(ctx, {start: startDay, end: lastDay});
+};
+
+const sendWakatimeSummaries = async ({callbackQuery, replyWithHTML, answerCbQuery}, params) => {
+  const telegramId = callbackQuery.from.id;
+  try {
+    const wakatimeInstance = await getWakaTimeInstance(telegramId);
+    if (wakatimeInstance) {
+      const result = await wakatimeInstance.summaries(params);
+      const text = genText(result);
+      replyWithHTML(text, {parse_mode: 'HTML'});
+      answerCbQuery('ok');
+    } else {
+      sendGetTokenMessage(replyWithHTML);
+    }
+  } catch (e) {
+    console.log(e);
+    sendWrongTokenMessage(replyWithHTML);
+  }
 };
 
 module.exports = {
-  wakatime,
+  commandAction,
   wakatimeAuth,
   wakatimeToday,
   wakatimeLastweek
 };
+
+// for test
 module.exports.regularTime = regularTime;
 module.exports.genText = genText;
+module.exports.getWakaTimeInstance = getWakaTimeInstance;

@@ -7,8 +7,8 @@ const getTelegramId = (context) => {
 };
 
 const createURL = (path) => {
-  const {protocol, host} = config;
-  return `${protocol}://${host}${path}`;
+  const {publicUrl} = config;
+  return `${publicUrl}${path}`;
 };
 
 module.exports = {

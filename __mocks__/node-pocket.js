@@ -16,4 +16,14 @@ GetPocket.prototype.get = function(params, cb) {
   }
 };
 
+GetPocket.prototype.archive = function(params, cb) {
+  const accessToken = this.params.access_token;
+  if (accessToken === 'auth-token') {
+    cb(false, {status: 1});
+  } else {
+    cb(true);
+  }
+};
+
+
 module.exports = GetPocket;

@@ -121,19 +121,19 @@ describe('Pocket', () => {
 
   describe('archive', () => {
     const callbackQuery = {data: 'pocket-archive-[1231231]', from: {id: 'fake-id'}};
-    const answerCbQuery = () => {};
     test('if token exist and auth success, return select view', async () => {
       mockingoose.User.toReturn({..._doc, pocketToken: 'auth-token'}, 'findOne');
-      const mockReplyWithHTML = jest.fn();
+      const answerCbQuery = jest.fn();
+      const mockReplyWithHTML = () => {};
       await archive({callbackQuery, replyWithHTML: mockReplyWithHTML, answerCbQuery});
-      const call = mockReplyWithHTML.mock.calls[0];
-      expect(call[0]).toContain('<b>Pocket All Articles since last week</b>');
-      expect(call[1]).toHaveProperty('disable_web_page_preview', true);
+      const call = answerCbQuery.mock.calls[0];
+      expect(call[0]).toContain('Success archive');
     });
 
     test('if auth fail, show re-auth view', async () => {
       mockingoose.User.toReturn({..._doc, pocketToken: 'not-auth-token'}, 'findOne');
       const mockReplyWithHTML = jest.fn();
+      const answerCbQuery = () => {};
       await archive({callbackQuery, replyWithHTML: mockReplyWithHTML, answerCbQuery});
       const call = mockReplyWithHTML.mock.calls[0];
       expect(call[0]).toContain('Please open this link to re-authorize the bot:');

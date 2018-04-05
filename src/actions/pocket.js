@@ -75,7 +75,7 @@ const reAuthAction = async ({replyWithHTML, telegramId}) => {
     `,
     Markup.inlineKeyboard(
       [
-        [Markup.callbackButton('Open Url to auth your pocket', authURL)]
+        [Markup.urlButton('Open Url to auth your pocket', authURL)]
       ]
     ).extra()
   );
@@ -104,7 +104,7 @@ const commandAction = async ({message, replyWithHTML}) => {
     `,
       Markup.inlineKeyboard(
         [
-          [Markup.callbackButton('Open Url to auth your pocket', authURL)]
+          [Markup.urlButton('Open Url to auth your pocket', authURL)]
         ]
       ).extra()
     );

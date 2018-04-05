@@ -1,7 +1,9 @@
 const {newUser} = require('../model/user');
 
-module.exports = ({from}, next) => {
-  const telegramId = from.id;
-  newUser(telegramId);
-  return next();
+module.exports = (ctx, next) => {
+  const telegramId = ctx.from.id;
+  return newUser(telegramId).then(() => {
+    console.log('finish');
+    return next(ctx);
+  });
 };
