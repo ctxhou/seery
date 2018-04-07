@@ -96,7 +96,11 @@ const nbaHelper = ({replyWithHTML}) => {
 
 const nba = async ({replyWithHTML}, date) => {
   const record = await getNbaRecord(date);
-  replyWithHTML(template(record, date), {disable_web_page_preview: true});
+  if (record.length) {
+    replyWithHTML(template(record, date), {disable_web_page_preview: true});
+  } else {
+    replyWithHTML(`<b>There is no NBA game in ${formatDate(date)}</b>`);
+  }
 };
 
 const nbaError = async ({replyWithHTML}, date) => {

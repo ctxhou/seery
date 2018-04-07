@@ -1,14 +1,41 @@
 jest.setMock('nba-stats-client', require('../../__mocks__/nba-stats-client'));
 const {
-  // nbaHelper,
-  // nba,
-  // nbaError,
+  nbaHelper,
+  nba,
+  nbaError,
   normalize
 } = require('../../src/actions/nba');
 const nbaClient = require('nba-stats-client');
 
-describe('nba', () => {
+test('nbaHelper', () => {
+  const mockReplyWithHTML = jest.fn();
+  nbaHelper({replyWithHTML: mockReplyWithHTML});
+  const call = mockReplyWithHTML.mock.calls[0];
+  expect(call[0]).toContain('NBA service is here');
+});
 
+test('nbaError', () => {
+  const mockReplyWithHTML = jest.fn();
+  nbaError({replyWithHTML: mockReplyWithHTML});
+  const call = mockReplyWithHTML.mock.calls[0];
+  expect(call[0]).toContain('NBA service error');
+});
+
+describe('nba', () => {
+  test('if the date had game', async () => {
+    const mockReplyWithHTML = jest.fn();
+    await nba({replyWithHTML: mockReplyWithHTML}, new Date(2018, 2, 10));
+    const call = mockReplyWithHTML.mock.calls[0];
+    expect(call[0]).toContain('<b>CHA</b> vs PHX');
+    expect(call[1]).toHaveProperty('disable_web_page_preview');
+  });
+
+  test('if the date didnt have game', async () => {
+    const mockReplyWithHTML = jest.fn();
+    await nba({replyWithHTML: mockReplyWithHTML}, new Date(2017, 8, 5));
+    const call = mockReplyWithHTML.mock.calls[0];
+    expect(call[0]).toContain('There is no NBA game in');
+  });
 });
 
 test('normalize', () => {
