@@ -11,7 +11,7 @@ router.get('/services/getpocket', (req, res) => {
 router.get('/getpocket_callback', function(req, res) {
   const telegramId = qs.parse(req.query.raw.state).telegramId;
   saveToken(telegramId, 'pocketToken', req.query.access_token);
-  res.end(JSON.stringify(req.query, null, 2));
+  res.end('Success auth you Pocket account to Seery.');
 });
 
 module.exports = router;
