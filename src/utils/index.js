@@ -1,3 +1,4 @@
+const urljoin = require('url-join');
 const config = require('../../env/config');
 
 const maxChar = 4096;
@@ -8,7 +9,7 @@ const getTelegramId = (context) => {
 
 const createURL = (path) => {
   const {publicUrl} = config;
-  return `${publicUrl}${path}`;
+  return urljoin(publicUrl, path);
 };
 
 module.exports = {

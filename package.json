@@ -30,6 +30,7 @@
     "telegraf": "^3.19.0",
     "tinyurl": "^1.1.2",
     "turl": "^1.1.1",
+    "url-join": "^4.0.0",
     "wakatime": "^1.2.0"
   },
   "devDependencies": {

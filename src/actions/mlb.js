@@ -110,4 +110,4 @@ module.exports = {
   mlbError
 };
 
-module.exports.normalize = normalize; // for test
+module.exports.getMlbRecord = getMlbRecord; // for test
