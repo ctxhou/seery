@@ -1,5 +1,5 @@
 <div align="center">
-	<img src="https://i.imgur.com/9iEkSeJ.png" width="500"/>
+	<img src="https://i.imgur.com/aAxk4n8.png" width="500"/>
 	<h1>Seery</h1>
 	<p>
 		<b>A telegram service integration robot</b>
@@ -11,11 +11,11 @@
 
 ## Command list
 
-* /pocket: get pocket article
-* /wakatime: get wakatime summary
-* /shorturl: get short url
-* /nba: get nba scores
-* /mlb: get mlb scores
+* `/pocket`: get pocket article
+* `/wakatime`: get wakatime summary
+* `/shorturl`: get short url
+* `/nba`: get nba scores
+* `/mlb`: get mlb scores
 
 ## Service List
 

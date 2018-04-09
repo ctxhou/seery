@@ -1,4 +1,5 @@
 const outdent = require('outdent');
+const Markup = require('telegraf/markup');
 
 const defaultHandler = ({replyWithHTML}) => {
   replyWithHTML(outdent`
@@ -10,7 +11,17 @@ const defaultHandler = ({replyWithHTML}) => {
     /shorturl - get short url
     /nba - get nba scores
     /mlb - get mlb scores
-  `);
+    /hn - get top 20 of hackernews
+  `, Markup
+      .keyboard([
+        ['/pocket', '/wakatime'],
+        ['/hn', '/mlb', 'nba'],
+        ['🔍 Help']
+      ])
+      .oneTime()
+      .resize()
+      .extra()
+  );
 };
 
 module.exports = defaultHandler;

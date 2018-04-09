@@ -8,7 +8,7 @@ const hnHanlder = require('./hn');
 
 const services = (bot) => {
   bot.start(defaultHandler);
-  bot.command('/help', defaultHandler);
+  bot.hears(/help/i, defaultHandler);
   nbaHanlder.message(bot);
   mlbHanlder.message(bot);
   shorturlHanlder.message(bot);
