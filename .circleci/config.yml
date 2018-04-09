@@ -27,13 +27,13 @@ jobs:
           - v1-dependencies-
 
       - run: yarn install
-
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
         
       # run tests!
-      - run: yarn test
+      - run: yarn test -- --coverage
+      - run: bash <(curl -s https://codecov.io/bash) -t 4c0ea31f-5745-4824-a694-3f76f61f4d78
 
 
