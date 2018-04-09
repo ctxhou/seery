@@ -13,6 +13,7 @@
   "author": "ctxhou",
   "license": "MIT",
   "dependencies": {
+    "botimize": "^1.0.2",
     "config": "^1.30.0",
     "date-fns": "^1.29.0",
     "express": "^4.16.3",

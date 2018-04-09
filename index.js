@@ -29,9 +29,8 @@ services(bot);
 bot.telegram.setWebhook(config.publicUrl);
 
 const app = express();
-// app.get('/', (req, res) => res.send('Hello World!'));
 app.use(bot.webhookCallback('/'));
-app.use(session({secret: 'very secret'}));
+app.use(session({secret: config.secret}));
 app.use(grant);
 app.use(...serviceRouters);
 

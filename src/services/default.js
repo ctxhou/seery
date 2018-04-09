@@ -15,7 +15,7 @@ const defaultHandler = ({replyWithHTML}) => {
   `, Markup
       .keyboard([
         ['/pocket', '/wakatime'],
-        ['/hn', '/mlb', 'nba'],
+        ['/hn', '/mlb', '/nba'],
         ['🔍 Help']
       ])
       .oneTime()

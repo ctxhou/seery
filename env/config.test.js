@@ -4,5 +4,6 @@ module.exports = {
   db: 'mongodb://localhost/seery',
   telegramToken: 'test',
   publicUrl: 'test',
-  pocketConsumerToken: 'test'
+  pocketConsumerToken: 'test',
+  secret: 'very secret'
 };
