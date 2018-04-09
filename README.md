@@ -6,13 +6,13 @@
 	</p>
 	<br>
 	<br>
-	<br>
 </div>
 
 ## Command list
 
 * `/pocket`: get pocket article
 * `/wakatime`: get wakatime summary
+* `/hn`: get top 20 hacker news articles
 * `/shorturl`: get short url
 * `/nba`: get nba scores
 * `/mlb`: get mlb scores
@@ -20,8 +20,6 @@
 ## Service List
 
 ### Pocket
-
-##### commands
 
 **`/pocket`**
 
@@ -76,7 +74,7 @@
 
 **`/hn`**
 
-> get current top 20 hacker news articles
+> get top 20 hacker news articles
 
 ### Wakatime
 
