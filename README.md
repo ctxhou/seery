@@ -2,7 +2,9 @@
 	<img src="https://i.imgur.com/aAxk4n8.png" width="500"/>
 	<h1>Seery</h1>
 	<p>
-		<b>A telegram service integration robot</b>
+		<b>A service integration telegram robot</b>
+		<br>
+		<i><a href="http://t.me/SeeryBot">Start Using</a></i>
 	</p>
 	<br>
 	<br>
@@ -11,11 +13,11 @@
 ## Command list
 
 * `/pocket`: get pocket article
-* `/wakatime`: get wakatime summary
-* `/hn`: get top 20 hacker news articles
-* `/shorturl`: get short url
 * `/nba`: get nba scores
 * `/mlb`: get mlb scores
+* `/hn`: get top 20 hacker news articles
+* `/wakatime`: get wakatime summary
+* `/shorturl`: get short url
 
 ## Service List
 
