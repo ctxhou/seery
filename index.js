@@ -35,6 +35,10 @@ app.use(grant);
 app.use(...serviceRouters);
 
 const port = process.env.PORT || 5000;
+app.get('/', (req, res) => {
+  res.send('Hi, this is seery');
+});
+
 app.listen(port, () => {
   console.log('server is running on ' + port + ' port...');
 });
